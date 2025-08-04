@@ -1,12 +1,32 @@
-use <braille.scad>
+include <braille.scad>
+
+border = 2;
 
 difference() {
+  lines = [
+    "⠠⠕⠏⠢⠠⠠⠎⠉⠁⠙",
+    "⠀⠠⠠⠗⠕⠉⠅⠎⠖",
+  ];
+  top = 5 + border;
+  left = border + border;
+  right = border;
+  bottom = border;
+  width = get_longest_line(lines);
+  line_count = len(lines);
   braille_card(
-    [
-      "⠠⠕⠏⠢⠠⠠⠎⠉⠁⠙",
-      "⠀⠠⠠⠗⠕⠉⠅⠎⠖",
-    ], thickness=2
+    lines, thickness=2,
+    top=top, left=left, right=right, bottom=bottom
   );
-  translate([5, 5, -1])
+  translate([0, 0, 2])
+    difference() {
+      linear_extrude(height=1)
+        offset(r=5, chamfer=true)
+          square([left + width + right, bottom + (line_count * line_spacing) + top]);
+      translate([left, bottom, 0])
+        linear_extrude(height=1)
+          offset(r=5, chamfer=true)
+            square([width, line_count * line_spacing]);
+    }
+  translate([3, 3, -1])
     cylinder(r=2, h=5);
 }
