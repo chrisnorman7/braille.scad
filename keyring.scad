@@ -17,16 +17,16 @@ difference() {
     lines, thickness=2,
     top=top, left=left, right=right, bottom=bottom
   );
-  translate([0, 0, 2])
-    difference() {
+  difference() {
+    translate([0, 0, 2])
       linear_extrude(height=1)
         offset(r=5, chamfer=true)
           square([left + width + right, bottom + (line_count * line_spacing) + top]);
-      translate([left, bottom, 0])
-        linear_extrude(height=1)
-          offset(r=5, chamfer=true)
-            square([width, line_count * line_spacing]);
-    }
+    translate([left, bottom, 2])
+      linear_extrude(height=1)
+        offset(r=5, chamfer=true)
+          square([width, line_count * line_spacing]);
+  }
   translate([3, 3, -1])
     cylinder(r=2, h=5);
 }
