@@ -7,6 +7,9 @@ dot_spacing_y = 2.5; // Distance between rows in a cell
 cell_spacing = 6; // Distance between Braille characters
 line_spacing = 10; // Space between lines.
 
+// The default border for `braille_card`.
+default_border = 2;
+
 // Returns all the bits from `string`.
 function getBitsFromString(string) =
   [
@@ -41,7 +44,7 @@ function getBits(charCode) =
 
 // Generate a Braille dot
 module braille_dot() {
-  cylinder(h=dot_height, r=dot_radius, $fn=24);
+  cylinder(h=dot_height, r=dot_radius, $fn=100);
 }
 
 /*
@@ -49,17 +52,14 @@ Draw a Braille cell.
 
 The `dots` argument must be a list of integers, like that returned by `getBitsFromCharacter`.
 */
-module braille_cell(dots) {
+module braille_cell(character) {
+  dots = getBitsFromCharacter(character);
   for (i = [0:5]) {
     if (dots[i]) {
       // Column: left (0) or right (1)
       col = i == 3 || i == 4 || i == 5 ? 1 : 0;
       row = [0, 1, 2, 0, 1, 2][i];
-      v = [
-        col * dot_spacing_x,
-        -row * dot_spacing_y,
-        0,
-      ];
+      v = [(col * dot_spacing_x) + (dot_spacing_x / 2), ( -row * dot_spacing_y) - (dot_spacing_y / 2), 0];
       translate(v)
         braille_dot();
     }
@@ -68,33 +68,40 @@ module braille_cell(dots) {
 
 // Print a line of braille text.
 module braille_line(string = []) {
-  characters = getBitsFromString(string);
-  for (i = [0:len(characters) - 1]) {
+  for (i = [0:len(string) - 1]) {
     x = i * cell_spacing;
     y = dot_spacing_y * 4;
     z = 0;
     translate([x, y, z])
-      braille_cell(characters[i]);
+      braille_cell(string[i]);
   }
 }
 
 // Get how much horizontal space would be taken up by `characters`.
-function get_width(characters) = len(characters) * cell_spacing;
+function get_width(characters) =
+  len(characters) * cell_spacing;
 
 // Get the longest line in `lines`.
-function get_longest_line(lines) = max([for (line = lines) get_width(getBitsFromString(line))]);
+function get_longest_line(lines) =
+  max(
+    [
+      for (line = lines) get_width(getBitsFromString(line)),
+    ]
+  );
 
 // A braille card.
-module braille_card(lines, thickness = 1, rounding = 5, top = 5, left = 2, right = 0, bottom = 0) {
+module braille_card(lines, thickness = 1, rounding = 5, top = default_border, left = default_border, right = default_border, bottom = default_border) {
   line_count = len(lines);
   echo("Line count: ", line_count);
   width = get_longest_line(lines);
-  echo("Width: ", width);
-  echo("Height: ", line_count * line_spacing);
+  echo("Width: ", left + width + right);
+  echo("Height: ", bottom + (line_count * line_spacing) + top);
   linear_extrude(height=thickness)
     offset(r=rounding)
       square([left + width + right, bottom + (line_count * line_spacing) + top]);
-  reversed_lines = [for (i = [line_count - 1:-1:0]) lines[i]];
+  reversed_lines = [
+    for (i = [line_count - 1:-1:0]) lines[i],
+  ];
   for (i = [0:line_count - 1]) {
     v = [left, bottom + (i * line_spacing), thickness];
     echo("Line ", i + 1, ": ", v);
