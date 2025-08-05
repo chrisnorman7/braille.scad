@@ -5,7 +5,7 @@ default_thickness = 2;
 default_border_thickness = 1;
 default_rounding = 5;
 default_keyring_radius = 2;
-default_keyring_offset = default_border_thickness / 1.2;
+default_keyring_offset = 3;
 
 module border(interior, thickness = default_border_thickness, rounding = default_rounding, top = default_border, left = default_border, right = default_border, bottom = default_border) {
   echo("Thickness: ", thickness);
