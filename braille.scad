@@ -67,7 +67,7 @@ module braille_cell(character) {
 }
 
 // Print a line of braille text.
-module braille_line(string = "") {
+module braille_line(string) {
   for (i = [0:len(string) - 1]) {
     x = i * cell_spacing;
     y = dot_spacing_y * 4;
