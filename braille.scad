@@ -1,7 +1,6 @@
 // Braille dot settings
 dot_radius = 0.75; // 1.5 mm diameter
 dot_height = 0.6; // Height of the dot
-// dot_height = 1; // Height of the dot
 dot_spacing_x = 2.5; // Distance between columns in a cell
 dot_spacing_y = 2.5; // Distance between rows in a cell
 cell_spacing = 6; // Distance between Braille characters
@@ -80,6 +79,15 @@ module braille_line(string) {
 // Get how much horizontal space would be taken up by `characters`.
 function get_width(characters) =
   len(characters) * cell_spacing;
+
+// Get the dimensions of a braille `string`.
+//
+// Returns `[width, height]`.
+function get_dimensions(string) =
+  [
+    get_width(string),
+    line_spacing,
+  ];
 
 // Get the longest line in `lines`.
 function get_longest_line(lines) =
