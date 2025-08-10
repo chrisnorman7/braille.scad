@@ -56,9 +56,11 @@ module braille_cell(character) {
   for (i = [0:5]) {
     if (dots[i]) {
       // Column: left (0) or right (1)
-      col = i == 3 || i == 4 || i == 5 ? 1 : 0;
+      col = i < 3 ? 0 : 1;
       row = [0, 1, 2, 0, 1, 2][i];
-      v = [(col * dot_spacing_x) + (dot_spacing_x / 2), ( -row * dot_spacing_y) - (dot_spacing_y / 2), 0];
+      x = (col * dot_spacing_x) + (dot_spacing_x / 2);
+      y = ( (2 - row) * dot_spacing_y) + (dot_spacing_y / 2);
+      v = [x, y, 0];
       translate(v)
         braille_dot();
     }
@@ -69,7 +71,7 @@ module braille_cell(character) {
 module braille_line(string) {
   for (i = [0:len(string) - 1]) {
     x = i * cell_spacing;
-    y = dot_spacing_y * 4;
+    y = 0;
     z = 0;
     translate([x, y, z])
       braille_cell(string[i]);
@@ -83,7 +85,7 @@ function get_width(characters) =
 // Get the dimensions of a braille `string`.
 //
 // Returns `[width, height]`.
-function get_dimensions(string) =
+function get_braille_dimensions(string) =
   [
     get_width(string),
     line_spacing,
