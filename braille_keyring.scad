@@ -1,6 +1,5 @@
 include <braille.scad>
 
-lines = ["⠠⠹⠀⠊⠎⠀⠁⠝", "⠳⠞⠗⠁⠛⠑⠖⠖"];
 default_thickness = 2;
 default_border_thickness = 1;
 default_rounding = 5;
