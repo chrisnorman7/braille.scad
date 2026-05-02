@@ -93,11 +93,15 @@ function get_braille_dimensions(string) =
 
 // Get the longest line in `lines`.
 function get_longest_line(lines) =
-  max(
+  len(lines) == 1 ? get_width(lines[0])
+  : max(
     [
       for (line = lines) get_width(getBitsFromString(line)),
     ]
   );
+
+// Returns the height of braille `lines`.
+function get_braille_height(lines) = len(lines) * line_spacing;
 
 // A module which prints multiple braille lines.
 module braille_lines(lines) {
@@ -118,7 +122,7 @@ module braille_lines(lines) {
 module braille_card(lines, thickness = 1, rounding = 5, top = default_border, left = default_border, right = default_border, bottom = default_border) {
   width = get_longest_line(lines);
   echo("Width: ", left + width + right);
-  echo("Height: ", bottom + (line_count * line_spacing) + top);
+  echo("Height: ", bottom + get_braille_height(lines) + top);
   linear_extrude(height=thickness)
     offset(r=rounding)
       square([left + width + right, bottom + (line_count * line_spacing) + top]);
