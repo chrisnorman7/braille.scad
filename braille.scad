@@ -99,23 +99,29 @@ function get_longest_line(lines) =
     ]
   );
 
-// A braille card.
-module braille_card(lines, thickness = 1, rounding = 5, top = default_border, left = default_border, right = default_border, bottom = default_border) {
+// A module which prints multiple braille lines.
+module braille_lines(lines) {
   line_count = len(lines);
   echo("Line count: ", line_count);
+  reversed_lines = [
+    for (i = [line_count - 1:-1:0]) lines[i],
+  ];
+  for (i = [0:line_count - 1]) {
+    v = [0, i * line_spacing, 0];
+    echo("Line ", i + 1, v);
+    translate(v)
+      braille_line(reversed_lines[i]);
+  }
+}
+
+// A braille card.
+module braille_card(lines, thickness = 1, rounding = 5, top = default_border, left = default_border, right = default_border, bottom = default_border) {
   width = get_longest_line(lines);
   echo("Width: ", left + width + right);
   echo("Height: ", bottom + (line_count * line_spacing) + top);
   linear_extrude(height=thickness)
     offset(r=rounding)
       square([left + width + right, bottom + (line_count * line_spacing) + top]);
-  reversed_lines = [
-    for (i = [line_count - 1:-1:0]) lines[i],
-  ];
-  for (i = [0:line_count - 1]) {
-    v = [left, bottom + (i * line_spacing), thickness];
-    echo("Line ", i + 1, ": ", v);
-    translate(v)
-      braille_line(reversed_lines[i]);
-  }
+  translate([left, bottom, thickness])
+    braille_lines(lines);
 }
