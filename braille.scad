@@ -129,3 +129,27 @@ module braille_card(lines, thickness = 1, rounding = 5, top = default_border, le
   translate([left, bottom, thickness])
     braille_lines(lines);
 }
+
+// Return a braille digit.
+function braille_digit(d) =
+  d == 0 ? "⠚"
+  : d == 1 ? "⠁"
+  : d == 2 ? "⠃"
+  : d == 3 ? "⠉"
+  : d == 4 ? "⠙"
+  : d == 5 ? "⠑"
+  : d == 6 ? "⠋"
+  : d == 7 ? "⠛"
+  : d == 8 ? "⠓"
+  : d == 9 ? "⠊"
+  : "⣿";
+
+function int_to_braille_digits(n) =
+  n < 10 ? braille_digit(n)
+  : str(
+    int_to_braille_digits(floor(n / 10)),
+    braille_digit(n % 10)
+  );
+
+function braille_number(n) =
+  str("⠼", int_to_braille_digits(n));
