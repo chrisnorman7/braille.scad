@@ -144,12 +144,12 @@ function braille_digit(d) =
   : d == 9 ? "⠊"
   : "⣿";
 
-function braille_digits(n) =
-  n < 10 ? braille_digit(n)
+function braille_digits(n, width = 1) =
+  width <= 1 && n < 10 ? braille_digit(n)
   : str(
-    braille_digits(floor(n / 10)),
+    braille_digits(floor(n / 10), width - 1),
     braille_digit(n % 10)
   );
 
-function braille_number(n) =
-  str("⠼", braille_digits(n));
+function braille_number(n, width = 1) =
+  str("⠼", braille_digits(n, width));
